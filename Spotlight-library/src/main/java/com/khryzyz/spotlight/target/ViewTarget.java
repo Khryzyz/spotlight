@@ -1,4 +1,4 @@
-package com.wooplr.spotlight.target;
+package com.khryzyz.spotlight.target;
 
 import android.graphics.Point;
 import android.graphics.Rect;

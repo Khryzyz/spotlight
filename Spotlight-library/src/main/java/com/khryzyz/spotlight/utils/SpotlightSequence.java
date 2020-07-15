@@ -1,4 +1,4 @@
-package com.wooplr.spotlight.utils;
+package com.khryzyz.spotlight.utils;
 
 /**
  * Created by Carlos Reyna on 30/07/16.
@@ -12,9 +12,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
-import com.wooplr.spotlight.SpotlightConfig;
-import com.wooplr.spotlight.SpotlightView;
-import com.wooplr.spotlight.prefs.PreferencesManager;
+import com.khryzyz.spotlight.SpotlightConfig;
+import com.khryzyz.spotlight.SpotlightView;
+import com.khryzyz.spotlight.prefs.PreferencesManager;
 
 import java.util.LinkedList;
 import java.util.Queue;

@@ -1,4 +1,4 @@
-package com.wooplr.spotlight.target;
+package com.khryzyz.spotlight.target;
 
 /**
  * Adapted from github.com/dupengtao/LineAnimation

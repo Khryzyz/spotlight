@@ -1,9 +1,9 @@
-package com.wooplr.spotlight;
+package com.khryzyz.spotlight;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
 
-import com.wooplr.spotlight.utils.Utils;
+import com.khryzyz.spotlight.utils.Utils;
 
 /**
  * Created by jitender on 14/06/16.

@@ -1,4 +1,4 @@
-package com.wooplr.spotlight.prefs;
+package com.khryzyz.spotlight.prefs;
 
 import android.content.Context;
 import android.content.SharedPreferences;

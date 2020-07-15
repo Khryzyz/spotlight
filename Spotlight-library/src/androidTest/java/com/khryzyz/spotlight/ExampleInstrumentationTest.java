@@ -1,4 +1,4 @@
-package com.wooplr.spotlight;
+package com.khryzyz.spotlight;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -24,6 +24,6 @@ public class ExampleInstrumentationTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.wooplr.spotlight.test", appContext.getPackageName());
+        assertEquals("com.khryzyz.spotlight.test", appContext.getPackageName());
     }
 }

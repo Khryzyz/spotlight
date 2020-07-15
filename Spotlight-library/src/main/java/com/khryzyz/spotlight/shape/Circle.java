@@ -1,10 +1,10 @@
-package com.wooplr.spotlight.shape;
+package com.khryzyz.spotlight.shape;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 
-import com.wooplr.spotlight.target.Target;
+import com.khryzyz.spotlight.target.Target;
 
 /**
  * Created by jitender on 10/06/16.

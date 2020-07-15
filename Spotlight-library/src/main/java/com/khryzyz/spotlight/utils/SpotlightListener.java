@@ -1,4 +1,4 @@
-package com.wooplr.spotlight.utils;
+package com.khryzyz.spotlight.utils;
 
 
 /**

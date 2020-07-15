@@ -9,7 +9,7 @@ Spotlight is an Android library used to onboard users by showcasing specific fea
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Spotlight-green.svg?style=flat)](http://android-arsenal.com/details/1/3730)
 
 # Screen
-<img src="https://raw.githubusercontent.com/wooplr/Spotlight/master/art/intro.gif?token=AA5ZAHdvAspW6Zj8YyyKamkV7jWXFtMHks5XaQovwA%3D%3D"/>
+<img src="https://raw.githubusercontent.com/khryzyz/Spotlight/master/art/intro.gif?token=AA5ZAHdvAspW6Zj8YyyKamkV7jWXFtMHks5XaQovwA%3D%3D"/>
 
 # Usage
 ```java
@@ -28,6 +28,11 @@ new SpotlightView.Builder(this)
         .target(view)
         .lineAnimDuration(400)
         .lineAndArcColor(Color.parseColor("#eb273f"))
+		.showButton(true)
+		.buttonColorText(Color.parseColor("#eb273f"))
+		.buttonColorBackground(Color.parseColor("#ffffff"))
+		.buttonSize(16)
+		.buttonText("Entendido")
         .dismissOnTouch(true)
         .dismissOnBackPress(true)
         .enableDismissAfterShown(true)
@@ -54,7 +59,7 @@ new SpotlightView.Builder(this)
     ```javascript
     dependencies {
         ...
-        implementation 'com.github.wooplr:Spotlight:1.2.3'
+        implementation 'com.github.khryzyz:Spotlight:1.2.3'
     }
     ```
 
@@ -76,7 +81,7 @@ new SpotlightView.Builder(this)
 
     ```xml
     <dependency>
-        <groupId>com.github.wooplr</groupId>
+        <groupId>com.github.khryzyz</groupId>
         <artifactId>Spotlight</artifactId>
         <version>1.2.3</version>
     </dependency>
@@ -155,12 +160,14 @@ config.setLineAndArcColor(0xFFFFFFFF);
 # Proguard rules
 
 ```java
--keep class com.wooplr.spotlight.** { *; }
--keep interface com.wooplr.spotlight.**
--keep enum com.wooplr.spotlight.**
+-keep class com.khryzyz.spotlight.** { *; }
+-keep interface com.khryzyz.spotlight.**
+-keep enum com.khryzyz.spotlight.**
 ```
 
 # Credits
+[Spotlight](https://github.com/29jitender/Spotlight)
+
 [MaterialIntroView](https://github.com/iammert/MaterialIntroView)
 
 [Rahul Khanna](https://www.linkedin.com/in/rahul-khanna-01705827)

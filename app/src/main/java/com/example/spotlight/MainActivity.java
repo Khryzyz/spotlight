@@ -9,15 +9,14 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.wooplr.spotlight.SpotlightView;
-import com.wooplr.spotlight.prefs.PreferencesManager;
-import com.wooplr.spotlight.utils.SpotlightSequence;
-import com.wooplr.spotlight.utils.Utils;
+import com.khryzyz.spotlight.SpotlightView;
+import com.khryzyz.spotlight.prefs.PreferencesManager;
+import com.khryzyz.spotlight.utils.SpotlightSequence;
+import com.khryzyz.spotlight.utils.Utils;
 
 import java.util.Random;
 
@@ -26,7 +25,6 @@ import butterknife.ButterKnife;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
 
 
 //    static {
@@ -128,16 +126,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        SpotlightSequence.getInstance(MainActivity.this,null)
-                                .addSpotlight(switchAnimation, "Switch Animation", "Click to swtich the animation", INTRO_SWITCH)
-                                .addSpotlight(reset, "Reset ", "Click here to reset preferences", INTRO_RESET)
-                                .addSpotlight(resetAndPlay, "Play Again", "Click here to play again", INTRO_REPEAT)
-                                .addSpotlight(changePosAndPlay, "Change Position", "Click here to change position and replay", INTRO_CHANGE_POSITION)
+                        SpotlightSequence.getInstance(MainActivity.this, null)
+//                                .addSpotlight(switchAnimation, "Switch Animation", "Click to swtich the animation", INTRO_SWITCH)
+//                                .addSpotlight(reset, "Reset ", "Click here to reset preferences", INTRO_RESET)
+//                                .addSpotlight(resetAndPlay, "Play Again", "Click here to play again", INTRO_REPEAT)
+//                                .addSpotlight(changePosAndPlay, "Change Position", "Click here to change position and replay", INTRO_CHANGE_POSITION)
                                 .addSpotlight(startSequence, "Start sequence", "Well.. you just clicked here", INTRO_SEQUENCE)
-                                .addSpotlight(fab,"Love", "Like the picture?\n" + "Let others know.", INTRO_CARD)
+                                .addSpotlight(fab, "Love", "Like the picture?\n" + "Let others know.", INTRO_CARD)
                                 .startSequence();
                     }
-                },400);
+                }, 400);
                 break;
         }
     }
@@ -159,8 +157,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .target(view)
                 .lineAnimDuration(400)
                 .lineAndArcColor(Color.parseColor("#eb273f"))
-                .dismissOnTouch(true)
+                .dismissOnTouch(false)
                 .dismissOnBackPress(true)
+                .showButton(true)
+                .buttonColorText(Color.parseColor("#eb273f"))
+                .buttonColorBackground(Color.parseColor("#ffffff"))
+                .buttonSize(16)
+                .buttonText("Entendido")
                 .enableDismissAfterShown(true)
                 .usageId(usageId) //UNIQUE ID
                 .show();
@@ -170,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        if(spotLight.isShown()){
+        if (spotLight.isShown()) {
             spotLight.removeSpotlightView(false);//Remove current spotlight view from parent
             resetAndPlay.performClick();//Show it again in new orientation if required.
         }

@@ -1,4 +1,4 @@
-package com.wooplr.spotlight;
+package com.khryzyz.spotlight;
 
 import android.animation.Animator;
 import android.annotation.TargetApi;
@@ -24,6 +24,7 @@ import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -33,17 +34,19 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.wooplr.spotlight.prefs.PreferencesManager;
-import com.wooplr.spotlight.shape.Circle;
-import com.wooplr.spotlight.shape.NormalLineAnimDrawable;
-import com.wooplr.spotlight.target.AnimPoint;
-import com.wooplr.spotlight.target.Target;
-import com.wooplr.spotlight.target.ViewTarget;
-import com.wooplr.spotlight.utils.SpotlightListener;
-import com.wooplr.spotlight.utils.Utils;
+import com.khryzyz.spotlight.prefs.PreferencesManager;
+import com.khryzyz.spotlight.shape.Circle;
+import com.khryzyz.spotlight.shape.NormalLineAnimDrawable;
+import com.khryzyz.spotlight.target.AnimPoint;
+import com.khryzyz.spotlight.target.Target;
+import com.khryzyz.spotlight.target.ViewTarget;
+import com.khryzyz.spotlight.utils.SpotlightListener;
+import com.khryzyz.spotlight.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +92,6 @@ public class SpotlightView extends FrameLayout {
      */
     private Target targetView;
 
-
     /**
      * Eraser to erase the circle area
      */
@@ -124,6 +126,16 @@ public class SpotlightView extends FrameLayout {
     private boolean dismissOnBackPress;
     private boolean enableDismissAfterShown;
 
+    /**
+     * Button
+     */
+    private boolean showButton;
+    private int buttonSize = 24;
+    private int buttonSizeDimenUnit = -1;
+    private int buttonColorText = Color.parseColor("#ffffff");
+    private int buttonColorBackground = Color.parseColor("#000000");
+    private CharSequence buttonText = "Got it!";
+
     private PreferencesManager preferencesManager;
     private String usageId;
 
@@ -142,10 +154,20 @@ public class SpotlightView extends FrameLayout {
      */
     private int gutter = Utils.dpToPx(36);
 
+    //Spaces above and below the line
+    private int spaceAboveLine = Utils.dpToPx(8);
+    private int spaceBelowLine = Utils.dpToPx(12);
+
+    private int extramargin = Utils.dpToPx(16);
+
     /**
      * Views Heading and sub-heading for spotlight
      */
     private TextView subHeadingTv, headingTv;
+
+    private LinearLayout linearLayoutContent;
+
+    private Button buttonGotIt;
 
     /**
      * Whether to show the arc at the end of the line that points to the target.
@@ -181,13 +203,11 @@ public class SpotlightView extends FrameLayout {
     private PathEffect lineEffect;
     private int lineAndArcColor = Color.parseColor("#eb273f");
 
-
     private Typeface mTypeface = null;
 
     private int softwareBtnHeight;
-    
-    private boolean dismissCalled = false;
 
+    private boolean dismissCalled = false;
 
     public SpotlightView(Context context) {
         super(context);
@@ -219,6 +239,7 @@ public class SpotlightView extends FrameLayout {
         isRevealAnimationEnabled = true;
         dismissOnTouch = false;
         isPerformClick = false;
+        showButton = false;
         enableDismissAfterShown = false;
         dismissOnBackPress = false;
         handler = new Handler();
@@ -239,7 +260,7 @@ public class SpotlightView extends FrameLayout {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        try{
+        try {
             if (!isReady) return;
 
             if (bitmap == null || canvas == null) {
@@ -255,7 +276,7 @@ public class SpotlightView extends FrameLayout {
             circleShape.draw(this.canvas, eraser, padding);
 
             canvas.drawBitmap(bitmap, 0, 0, null);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -325,7 +346,7 @@ public class SpotlightView extends FrameLayout {
         handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    try{
+                                    try {
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
                                             if (isRevealAnimationEnabled)
@@ -336,7 +357,7 @@ public class SpotlightView extends FrameLayout {
                                         } else {
                                             startFadinAnimation(activity);
                                         }
-                                    }catch(Exception e){
+                                    } catch (Exception e) {
                                         e.printStackTrace();
                                     }
                                 }
@@ -353,7 +374,7 @@ public class SpotlightView extends FrameLayout {
             return;
         }
         dismissCalled = true;
-        
+
         preferencesManager.setDisplayed(usageId);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (isRevealAnimationEnabled)
@@ -573,10 +594,8 @@ public class SpotlightView extends FrameLayout {
 
     private void addPathAnimation(Activity activity) {
 
-
         View mView = new View(activity);
-        LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT);
+        LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         params.width = getViewWidth();
         params.height = getViewHeight();
 //        params.width = getMeasuredWidth();
@@ -588,8 +607,8 @@ public class SpotlightView extends FrameLayout {
         if (mTypeface != null)
             headingTv.setTypeface(mTypeface);
 
-        if(headingTvSizeDimenUnit != -1)
-            headingTv.setTextSize(headingTvSizeDimenUnit,headingTvSize);
+        if (headingTvSizeDimenUnit != -1)
+            headingTv.setTextSize(headingTvSizeDimenUnit, headingTvSize);
         else
             headingTv.setTextSize(headingTvSize);
 
@@ -601,14 +620,54 @@ public class SpotlightView extends FrameLayout {
         if (mTypeface != null)
             subHeadingTv.setTypeface(mTypeface);
 
-        if(subHeadingTvSizeDimenUnit != -1)
-            subHeadingTv.setTextSize(subHeadingTvSizeDimenUnit,subHeadingTvSize);
+        if (subHeadingTvSizeDimenUnit != -1)
+            subHeadingTv.setTextSize(subHeadingTvSizeDimenUnit, subHeadingTvSize);
         else
             subHeadingTv.setTextSize(subHeadingTvSize);
 
         subHeadingTv.setTextColor(subHeadingTvColor);
         subHeadingTv.setVisibility(View.GONE);
         subHeadingTv.setText(subHeadingTvText);
+
+        linearLayoutContent = new LinearLayout(activity);
+        linearLayoutContent.setOrientation(LinearLayout.VERTICAL);
+
+        //Button
+        buttonGotIt = new Button(activity);
+        if (mTypeface != null)
+            buttonGotIt.setTypeface(mTypeface);
+
+        if (buttonSizeDimenUnit != -1)
+            buttonGotIt.setTextSize(buttonSizeDimenUnit, buttonSize);
+        else
+            buttonGotIt.setTextSize(buttonSize);
+
+        LinearLayout.LayoutParams buttonGotItParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+
+        buttonGotItParams.topMargin = extramargin;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            // If we're running on Honeycomb or newer, then we can use the Theme's
+            // selectableItemBackground to ensure that the View has a pressed state
+            TypedValue outValue = new TypedValue();
+            activity.getTheme().resolveAttribute(buttonColorText, outValue, true);
+            buttonGotIt.setBackgroundResource(outValue.resourceId);
+        }
+
+
+        buttonGotIt.setLayoutParams(buttonGotItParams);
+
+        buttonGotIt.setTextColor(buttonColorText);
+        buttonGotIt.setBackgroundColor(buttonColorBackground);
+        buttonGotIt.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+
+        buttonGotIt.setVisibility(View.GONE);
+        buttonGotIt.setText(buttonText);
 
         //Line animation
         Paint p = new Paint();
@@ -650,7 +709,7 @@ public class SpotlightView extends FrameLayout {
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        if(enableDismissAfterShown)
+                        if (enableDismissAfterShown)
                             dismissOnTouch = true;
                     }
 
@@ -665,6 +724,8 @@ public class SpotlightView extends FrameLayout {
                 subHeadingTv.startAnimation(fadeIn);
                 headingTv.setVisibility(View.VISIBLE);
                 subHeadingTv.setVisibility(View.VISIBLE);
+                if (showButton)
+                    buttonGotIt.setVisibility(View.VISIBLE);
 
             }
 
@@ -698,15 +759,9 @@ public class SpotlightView extends FrameLayout {
         //For TextViews
         LayoutParams headingParams = new LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
-        LayoutParams subHeadingParams = new LayoutParams(LayoutParams.WRAP_CONTENT,
+        //For LinearLayout
+        LayoutParams linearLayoutContentParams = new LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
-
-        //Spaces above and below the line
-        int spaceAboveLine = Utils.dpToPx(8);
-        int spaceBelowLine = Utils.dpToPx(12);
-
-        int extramargin = Utils.dpToPx(16);
-
 
         //check up or down
         if (targetView.getPoint().y > screenHeight / 2) {//Down TODO: add a logic for by 2
@@ -727,13 +782,11 @@ public class SpotlightView extends FrameLayout {
                 headingParams.gravity = Gravity.BOTTOM | Gravity.LEFT;
                 headingTv.setGravity(Gravity.LEFT);
 
-
-                subHeadingParams.rightMargin = screenWidth - (targetView.getViewRight() - targetView.getViewWidth() / 2) + extramargin;
-                subHeadingParams.leftMargin = gutter;
-                subHeadingParams.bottomMargin = extramargin;
-                subHeadingParams.topMargin = targetView.getViewTop() / 2 + spaceBelowLine;
-                subHeadingParams.gravity = Gravity.LEFT;
-                subHeadingTv.setGravity(Gravity.LEFT);
+                linearLayoutContentParams.rightMargin = screenWidth - (targetView.getViewRight() - targetView.getViewWidth() / 2) + extramargin;
+                linearLayoutContentParams.leftMargin = gutter;
+                linearLayoutContentParams.bottomMargin = extramargin;
+                linearLayoutContentParams.topMargin = targetView.getViewTop() / 2 + spaceBelowLine;
+                linearLayoutContentParams.gravity = Gravity.LEFT;
 
             } else {//left
                 animPoints.add(new AnimPoint((targetView.getViewRight() - targetView.getViewWidth() / 2), targetView.getPoint().y - circleShape.getRadius() - extraPaddingForArc,
@@ -746,9 +799,8 @@ public class SpotlightView extends FrameLayout {
                         screenWidth - ((screenHeight > screenWidth) ? gutter : (gutter + softwareBtnHeight)),
                         targetView.getViewTop() / 2));
 
-
                 //TextViews
-                if(screenHeight > screenWidth)
+                if (screenHeight > screenWidth)
                     headingParams.rightMargin = gutter;//portrait
                 else
                     headingParams.rightMargin = gutter + softwareBtnHeight;//landscape
@@ -758,16 +810,14 @@ public class SpotlightView extends FrameLayout {
                 headingParams.gravity = Gravity.BOTTOM | Gravity.RIGHT;
                 headingTv.setGravity(Gravity.LEFT);
 
-
-                if(screenHeight > screenWidth)
-                    subHeadingParams.rightMargin = gutter;//portrait
+                if (screenHeight > screenWidth)
+                    linearLayoutContentParams.rightMargin = gutter;//portrait
                 else
-                    subHeadingParams.rightMargin = gutter + softwareBtnHeight;//landscape
-                subHeadingParams.leftMargin = (targetView.getViewRight() - targetView.getViewWidth() / 2) + extramargin;
-                subHeadingParams.topMargin = targetView.getViewTop() / 2 + spaceBelowLine;
-                subHeadingParams.bottomMargin = extramargin;
-                subHeadingParams.gravity = Gravity.RIGHT;
-                subHeadingTv.setGravity(Gravity.LEFT);
+                    linearLayoutContentParams.rightMargin = gutter + softwareBtnHeight;//landscape
+                linearLayoutContentParams.leftMargin = (targetView.getViewRight() - targetView.getViewWidth() / 2) + extramargin;
+                linearLayoutContentParams.topMargin = targetView.getViewTop() / 2 + spaceBelowLine;
+                linearLayoutContentParams.bottomMargin = extramargin;
+                linearLayoutContentParams.gravity = Gravity.RIGHT;
 
             }
         } else {//top
@@ -790,12 +840,11 @@ public class SpotlightView extends FrameLayout {
                 headingParams.gravity = Gravity.BOTTOM | Gravity.LEFT;
                 headingTv.setGravity(Gravity.LEFT);
 
-                subHeadingParams.leftMargin = gutter;
-                subHeadingParams.rightMargin = screenWidth - targetView.getViewRight() + targetView.getViewWidth() / 2 + extramargin;
-                subHeadingParams.bottomMargin = extramargin;
-                subHeadingParams.topMargin = ((screenHeight - targetView.getViewBottom()) / 2 + targetView.getViewBottom()) + spaceBelowLine;
-                subHeadingParams.gravity = Gravity.LEFT;
-                subHeadingTv.setGravity(Gravity.LEFT);
+                linearLayoutContentParams.leftMargin = gutter;
+                linearLayoutContentParams.rightMargin = screenWidth - targetView.getViewRight() + targetView.getViewWidth() / 2 + extramargin;
+                linearLayoutContentParams.bottomMargin = extramargin;
+                linearLayoutContentParams.topMargin = ((screenHeight - targetView.getViewBottom()) / 2 + targetView.getViewBottom()) + spaceBelowLine;
+                linearLayoutContentParams.gravity = Gravity.LEFT;
 
             } else {//left
                 animPoints.add(new AnimPoint(targetView.getViewRight() - targetView.getViewWidth() / 2,
@@ -809,7 +858,7 @@ public class SpotlightView extends FrameLayout {
                         (screenHeight - targetView.getViewBottom()) / 2 + targetView.getViewBottom()));
 
 //                //TextViews
-                if(screenHeight > screenWidth)
+                if (screenHeight > screenWidth)
                     headingParams.rightMargin = gutter;//portrait
                 else
                     headingParams.rightMargin = gutter + softwareBtnHeight;//landscape
@@ -819,20 +868,22 @@ public class SpotlightView extends FrameLayout {
                 headingParams.gravity = Gravity.BOTTOM | Gravity.RIGHT;
                 headingTv.setGravity(Gravity.LEFT);
 
-                if(screenHeight > screenWidth)
-                    subHeadingParams.rightMargin = gutter;//portrait
+                if (screenHeight > screenWidth)
+                    linearLayoutContentParams.rightMargin = gutter;//portrait
                 else
-                    subHeadingParams.rightMargin = gutter + softwareBtnHeight;//landscape
-                subHeadingParams.leftMargin = targetView.getViewRight() - targetView.getViewWidth() / 2 + extramargin;
-                subHeadingParams.bottomMargin = extramargin;
-                subHeadingParams.topMargin = ((screenHeight - targetView.getViewBottom()) / 2 + targetView.getViewBottom()) + spaceBelowLine;
-                subHeadingParams.gravity = Gravity.RIGHT;
-                subHeadingTv.setGravity(Gravity.LEFT);
+                    linearLayoutContentParams.rightMargin = gutter + softwareBtnHeight;//landscape
+                linearLayoutContentParams.leftMargin = targetView.getViewRight() - targetView.getViewWidth() / 2 + extramargin;
+                linearLayoutContentParams.bottomMargin = extramargin;
+                linearLayoutContentParams.topMargin = ((screenHeight - targetView.getViewBottom()) / 2 + targetView.getViewBottom()) + spaceBelowLine;
+                linearLayoutContentParams.gravity = Gravity.RIGHT;
+
             }
         }
 
         addView(headingTv, headingParams);
-        addView(subHeadingTv, subHeadingParams);
+        linearLayoutContent.addView(subHeadingTv);
+        linearLayoutContent.addView(buttonGotIt);
+        addView(linearLayoutContent, linearLayoutContentParams);
 
         return animPoints;
     }
@@ -851,16 +902,17 @@ public class SpotlightView extends FrameLayout {
 
     /**
      * Remove the spotlight view
+     *
      * @param needOnUserClickedCallback true, if user wants a call back when this spotlight view is removed from parent.
      */
     public void removeSpotlightView(boolean needOnUserClickedCallback) {
-        try{
-            if(needOnUserClickedCallback && listener != null)
+        try {
+            if (needOnUserClickedCallback && listener != null)
                 listener.onUserClicked(usageId);
 
             if (getParent() != null)
                 ((ViewGroup) getParent()).removeView(this);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -891,6 +943,31 @@ public class SpotlightView extends FrameLayout {
 
     public void setDismissOnBackPress(boolean dismissOnBackPress) {
         this.dismissOnBackPress = dismissOnBackPress;
+    }
+
+    public void setShowButton(boolean showButton) {
+        this.showButton = showButton;
+    }
+
+    public void setButtonSize(int buttonSize) {
+        this.buttonSize = buttonSize;
+    }
+
+    public void setButtonGotItSize(int dimenUnit, int buttonGotItSize) {
+        this.buttonSizeDimenUnit = dimenUnit;
+        this.buttonSize = buttonGotItSize;
+    }
+
+    public void setButtonColorText(int buttonColorText) {
+        this.buttonColorText = buttonColorText;
+    }
+
+    public void setButtonColorBackground(int buttonColorBackground) {
+        this.buttonColorBackground = buttonColorBackground;
+    }
+
+    public void setButtonText(CharSequence buttonText) {
+        this.buttonText = buttonText;
     }
 
     public boolean isEnableDismissAfterShown() {
@@ -947,7 +1024,7 @@ public class SpotlightView extends FrameLayout {
         this.headingTvSize = headingTvSize;
     }
 
-    public void setHeadingTvSize(int dimenUnit,int headingTvSize) {
+    public void setHeadingTvSize(int dimenUnit, int headingTvSize) {
         this.headingTvSizeDimenUnit = dimenUnit;
         this.headingTvSize = headingTvSize;
     }
@@ -993,7 +1070,7 @@ public class SpotlightView extends FrameLayout {
         this.lineEffect = pathEffect;
     }
 
-    private void setSoftwareBtnHeight(int px){
+    private void setSoftwareBtnHeight(int px) {
         this.softwareBtnHeight = px;
     }
 
@@ -1068,7 +1145,6 @@ public class SpotlightView extends FrameLayout {
             return this;
         }
 
-
         public Builder dismissOnTouch(boolean dismissOnTouch) {
             spotlightView.setDismissOnTouch(dismissOnTouch);
             return this;
@@ -1081,6 +1157,36 @@ public class SpotlightView extends FrameLayout {
 
         public Builder usageId(String usageId) {
             spotlightView.setUsageId(usageId);
+            return this;
+        }
+
+        public Builder showButton(boolean showButton) {
+            spotlightView.setShowButton(showButton);
+            return this;
+        }
+
+        public Builder buttonSize(int buttonGotItSize) {
+            spotlightView.setButtonSize(buttonGotItSize);
+            return this;
+        }
+
+        public Builder buttonSize(int dimenUnit, int buttonGotItSize) {
+            spotlightView.setButtonGotItSize(dimenUnit, buttonGotItSize);
+            return this;
+        }
+
+        public Builder buttonColorText(int color) {
+            spotlightView.setButtonColorText(color);
+            return this;
+        }
+
+        public Builder buttonColorBackground(int color) {
+            spotlightView.setButtonColorBackground(color);
+            return this;
+        }
+
+        public Builder buttonText(CharSequence buttonText) {
+            spotlightView.setButtonText(buttonText);
             return this;
         }
 
@@ -1111,7 +1217,7 @@ public class SpotlightView extends FrameLayout {
         }
 
         public Builder headingTvSize(int dimenUnit, int headingTvSize) {
-            spotlightView.setHeadingTvSize(dimenUnit,headingTvSize);
+            spotlightView.setHeadingTvSize(dimenUnit, headingTvSize);
             return this;
         }
 
@@ -1131,7 +1237,7 @@ public class SpotlightView extends FrameLayout {
         }
 
         public Builder subHeadingTvSize(int dimenUnit, int headingTvSize) {
-            spotlightView.setSubHeadingTvSize(dimenUnit,headingTvSize);
+            spotlightView.setSubHeadingTvSize(dimenUnit, headingTvSize);
             return this;
         }
 
@@ -1201,7 +1307,6 @@ public class SpotlightView extends FrameLayout {
 
     }
 
-
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (dismissOnBackPress && event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
@@ -1217,35 +1322,34 @@ public class SpotlightView extends FrameLayout {
         Log.d("Spotlight", s);
     }
 
-    private int getViewHeight(){
-        if(getWidth() > getHeight()){
+    private int getViewHeight() {
+        if (getWidth() > getHeight()) {
             //Landscape
             return getHeight();
-        }else{
+        } else {
             //Portrait
             return (getHeight() - softwareBtnHeight);
         }
     }
 
-    private int getViewWidth(){
-        if(getWidth() > getHeight()){
+    private int getViewWidth() {
+        if (getWidth() > getHeight()) {
             //Landscape
             return (getWidth() - softwareBtnHeight);
-        }else{
+        } else {
             //Portrait
             return getWidth();
         }
     }
 
     private static int getSoftButtonsBarHeight(Activity activity) {
-        try{
+        try {
             // getRealMetrics is only available with API 17 and +
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 DisplayMetrics metrics = new DisplayMetrics();
                 activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-                if(metrics.heightPixels > metrics.widthPixels)
-                {
+                if (metrics.heightPixels > metrics.widthPixels) {
                     //Portrait
                     int usableHeight = metrics.heightPixels;
                     activity.getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
@@ -1254,7 +1358,7 @@ public class SpotlightView extends FrameLayout {
                         return realHeight - usableHeight;
                     else
                         return 0;
-                }else{
+                } else {
                     //Landscape
                     int usableHeight = metrics.widthPixels;
                     activity.getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
@@ -1265,7 +1369,7 @@ public class SpotlightView extends FrameLayout {
                         return 0;
                 }
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
@@ -1274,22 +1378,23 @@ public class SpotlightView extends FrameLayout {
     /**
      * This will remove all usage ids from preferences.
      */
-    public void resetAllUsageIds(){
-        try{
+    public void resetAllUsageIds() {
+        try {
             preferencesManager.resetAll();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
      * This will remove given usage id from preferences.
+     *
      * @param id Spotlight usage id to be removed
      */
-    public void resetUsageId(String id){
-        try{
+    public void resetUsageId(String id) {
+        try {
             preferencesManager.reset(id);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

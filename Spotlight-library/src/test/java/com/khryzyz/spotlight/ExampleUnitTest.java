@@ -1,4 +1,4 @@
-package com.wooplr.spotlight;
+package com.khryzyz.spotlight;
 
 import org.junit.Test;
 
